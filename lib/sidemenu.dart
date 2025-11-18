@@ -57,35 +57,11 @@ class SideMenu extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.dashboard),
-            title: const Text('Dashboard'),
+            leading: const Icon(Icons.task_alt),
+            title: const Text('Daftar Tugas'),
             onTap: () {
               Navigator.pop(context);
               Navigator.pushReplacementNamed(context, Routes.home);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Profile'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, Routes.profile);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, Routes.settings);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.help),
-            title: const Text('Bantuan'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, Routes.help);
             },
           ),
           const Divider(),

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:praktikum/home_page.dart';
 import 'package:praktikum/login_page.dart';
-import 'package:praktikum/profile_page.dart';
-import 'package:praktikum/settings_page.dart';
-import 'package:praktikum/help_page.dart';
+import 'package:praktikum/task_form_page.dart';
+import 'package:praktikum/storage.dart';
 
 class Routes {
   static const String login = '/';
   static const String home = '/home';
-  static const String profile = '/profile';
-  static const String settings = '/settings';
-  static const String help = '/help';
+  static const String taskForm = '/task-form';
 
   static Route<dynamic> generateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
@@ -21,12 +18,11 @@ class Routes {
         return MaterialPageRoute(
           builder: (_) => HomePage(username: args as String?),
         );
-      case profile:
-        return MaterialPageRoute(builder: (_) => const ProfilePage());
-      case settings:
-        return MaterialPageRoute(builder: (_) => const SettingsPage());
-      case help:
-        return MaterialPageRoute(builder: (_) => const HelpPage());
+      case taskForm:
+        final args = routeSettings.arguments;
+        return MaterialPageRoute(
+          builder: (_) => TaskFormPage(task: args as Task?),
+        );
       default:
         return MaterialPageRoute(builder: (_) => const LoginPage());
     }

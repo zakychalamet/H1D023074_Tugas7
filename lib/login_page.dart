@@ -55,11 +55,19 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Icon(Icons.task_alt, size: 60, color: Colors.blue),
+            const SizedBox(height: 20),
+            const Text(
+              'Task Manager',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 30),
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(
                 labelText: 'Username',
                 border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
               ),
             ),
             const SizedBox(height: 16),
@@ -69,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
               decoration: InputDecoration(
                 labelText: 'Password',
                 border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(_hidePassword ? Icons.visibility : Icons.visibility_off),
                   onPressed: () {

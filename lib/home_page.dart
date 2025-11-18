@@ -13,75 +13,104 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? _username;
+  List<Task> _tasks = [];
 
   @override
   void initState() {
     super.initState();
-    _loadUsername();
+    _loadTasks();
   }
 
-  Future<void> _loadUsername() async {
-    final username = widget.username ?? await Storage.getUsername();
+  Future<void> _loadTasks() async {
+    final tasks = await Storage.getTasks();
     if (mounted) {
       setState(() {
-        _username = username;
+        _tasks = tasks;
       });
     }
+  }
+
+  Future<void> _addTask() async {
+    final result = await Navigator.pushNamed(context, Routes.taskForm);
+    if (result == true) {
+      _loadTasks();
+    }
+  }
+
+  Future<void> _editTask(Task task) async {
+    final result = await Navigator.pushNamed(
+      context,
+      Routes.taskForm,
+      arguments: task,
+    );
+    if (result == true) {
+      _loadTasks();
+    }
+  }
+
+  Future<void> _toggleTask(Task task) async {
+    await Storage.updateTask(task.copyWith(isCompleted: !task.isCompleted));
+    _loadTasks();
+  }
+
+  Future<void> _deleteTask(Task task) async {
+    await Storage.deleteTask(task.id);
+    _loadTasks();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard')),
+      appBar: AppBar(
+        title: const Text('Daftar Tugas'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _addTask,
+          ),
+        ],
+      ),
       drawer: const SideMenu(),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Halo, ${_username ?? 'User'}!',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: _tasks.isEmpty
+          ? const Center(
+              child: Text('Belum ada tugas'),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: _tasks.length,
+              itemBuilder: (context, index) {
+                final task = _tasks[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  child: ListTile(
+                    leading: Checkbox(
+                      value: task.isCompleted,
+                      onChanged: (_) => _toggleTask(task),
+                    ),
+                    title: Text(
+                      task.title,
+                      style: TextStyle(
+                        decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                        color: task.isCompleted ? Colors.grey : null,
+                      ),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => _editTask(task),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deleteTask(task),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 20),
-            const Text('Menu Utama:', style: TextStyle(fontSize: 18)),
-            const SizedBox(height: 12),
-            _buildMenuCard(
-              context,
-              icon: Icons.person,
-              title: 'Profile',
-              route: Routes.profile,
-            ),
-            _buildMenuCard(
-              context,
-              icon: Icons.settings,
-              title: 'Settings',
-              route: Routes.settings,
-            ),
-            _buildMenuCard(
-              context,
-              icon: Icons.help,
-              title: 'Bantuan',
-              route: Routes.help,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuCard(BuildContext context, {required IconData icon, required String title, required String route}) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {
-          Navigator.pushNamed(context, route);
-        },
-      ),
     );
   }
 }
